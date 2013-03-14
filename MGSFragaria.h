@@ -11,6 +11,8 @@
 // - (void)setObject:(id)object forKey:(id)key;
 // - (id)objectForKey:(id)key;
 
+#define INPUT_STRING_DEFAULT @"inputString"
+
 // BOOL
 extern NSString * const MGSFOIsSyntaxColoured;
 extern NSString * const MGSFOShowLineNumberGutter;
@@ -19,6 +21,7 @@ extern NSString * const MGSFOIsEdited;
 // string
 extern NSString * const MGSFOSyntaxDefinitionName;
 extern NSString * const MGSFODocumentName;
+extern NSString * const MGSFONewLineNotification;
 
 // integer
 extern NSString * const MGSFOGutterWidth;

@@ -127,7 +127,7 @@ static id sharedInstance = nil;
 	[dictionary setValue:[NSNumber numberWithInteger:80] forKey:MGSFragariaPrefsShowPageGuideAtColumn];
 	[dictionary setValue:[NSNumber numberWithFloat:1.0f] forKey:MGSFragariaPrefsAutocompleteAfterDelay];
 	
-	[dictionary setValue:[NSArchiver archivedDataWithRootObject:[NSFont fontWithName:@"Menlo" size:11]] forKey:MGSFragariaPrefsTextFont];
+	[dictionary setValue:[NSArchiver archivedDataWithRootObject:[NSFont fontWithName:@"Menlo" size:20]] forKey:MGSFragariaPrefsTextFont];
 	
 	[dictionary setValue:[NSNumber numberWithBool:YES] forKey:MGSFragariaPrefsShowFullPathInWindowTitle];
 	[dictionary setValue:[NSNumber numberWithBool:YES] forKey:MGSFragariaPrefsShowLineNumberGutter];

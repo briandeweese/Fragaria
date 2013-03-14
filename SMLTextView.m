@@ -522,9 +522,9 @@ Unless required by applicable law or agreed to in writing, software distributed 
  - insertNewline:
  
  */
-- (void)insertNewline:(id)sender
+- (void)insertLineBreak:(id)sender
 {
-	[super insertNewline:sender];
+	[super insertLineBreak:sender];
 	
 	// If we should indent automatically, check the previous line and scan all the whitespace at the beginning of the line into a string and insert that string into the new line
 	NSString *lastLineString = [[self string] substringWithRange:[[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)]];
@@ -550,6 +550,14 @@ Unless required by applicable law or agreed to in writing, software distributed 
 			}
 		}
 	}
+}
+
+- (void)insertNewline:(id)sender
+{
+  [super insertNewline:sender];
+  [[NSNotificationCenter defaultCenter] postNotificationName:MGSFONewLineNotification object:self userInfo:[NSDictionary dictionaryWithObject:self.string forKey:INPUT_STRING_DEFAULT]];
+  
+  self.string = @"";
 }
 
 /*

@@ -21,6 +21,7 @@ NSString * const MGSFOIsEdited = @"isEdited";
 // string
 NSString * const MGSFOSyntaxDefinitionName = @"syntaxDefinition";
 NSString * const MGSFODocumentName = @"name";
+NSString * const MGSFONewLineNotification = @"newLineNotification";
 
 // integer
 NSString * const MGSFOGutterWidth = @"gutterWidth";
