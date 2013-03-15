@@ -525,39 +525,75 @@ Unless required by applicable law or agreed to in writing, software distributed 
 - (void)insertLineBreak:(id)sender
 {
 	[super insertLineBreak:sender];
+  
+  // If we should indent automatically, check the previous line and scan all the whitespace at the beginning of the line into a string and insert that string into the new line
+  
+  /*NSString *lastLineString = [[self string] substringWithRange:[[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)]];
+  if ([[SMLDefaults valueForKey:MGSFragariaPrefsIndentNewLinesAutomatically] boolValue] == YES) {
+    NSString *previousLineWhitespaceString;
+    NSScanner *previousLineScanner = [[[NSScanner alloc] initWithString:[[self string] substringWithRange:[[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)]]] autorelease];
+    [previousLineScanner setCharactersToBeSkipped:nil];
+    if ([previousLineScanner scanCharactersFromSet:[NSCharacterSet whitespaceCharacterSet] intoString:&previousLineWhitespaceString]) {
+      [self insertText:previousLineWhitespaceString];
+    }
+    
+    if ([[SMLDefaults valueForKey:MGSFragariaPrefsAutomaticallyIndentBraces] boolValue] == YES) {
+      NSCharacterSet *characterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+      NSInteger idx = [lastLineString length];
+      while (idx--) {
+        if ([characterSet characterIsMember:[lastLineString characterAtIndex:idx]]) {
+          continue;
+        }
+        if ([lastLineString characterAtIndex:idx] == '{') {
+          [self insertTab:nil];
+        }
+        break;
+      }
+    }
+  }*/
 	
-	// If we should indent automatically, check the previous line and scan all the whitespace at the beginning of the line into a string and insert that string into the new line
-	NSString *lastLineString = [[self string] substringWithRange:[[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)]];
-	if ([[SMLDefaults valueForKey:MGSFragariaPrefsIndentNewLinesAutomatically] boolValue] == YES) {
-		NSString *previousLineWhitespaceString;
-		NSScanner *previousLineScanner = [[[NSScanner alloc] initWithString:[[self string] substringWithRange:[[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)]]] autorelease];
-		[previousLineScanner setCharactersToBeSkipped:nil];		
-		if ([previousLineScanner scanCharactersFromSet:[NSCharacterSet whitespaceCharacterSet] intoString:&previousLineWhitespaceString]) {
-			[self insertText:previousLineWhitespaceString];
-		}
-		
-		if ([[SMLDefaults valueForKey:MGSFragariaPrefsAutomaticallyIndentBraces] boolValue] == YES) {
-			NSCharacterSet *characterSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-			NSInteger idx = [lastLineString length];
-			while (idx--) {
-				if ([characterSet characterIsMember:[lastLineString characterAtIndex:idx]]) {
-					continue;
-				}
-				if ([lastLineString characterAtIndex:idx] == '{') {
-					[self insertTab:nil];
-				}
-				break;
-			}
-		}
-	}
 }
 
 - (void)insertNewline:(id)sender
 {
-  [super insertNewline:sender];
+  [super moveToEndOfDocument:sender];
+  
+  NSString *strippedString = [self.string stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+  
+  self.string = strippedString;
+  
+  // Create the predicate
+  NSPredicate *myPredicate = [NSPredicate predicateWithFormat:@"SELF endswith %@", @"\\"];
+  
+  // Run the predicate
+  // match == YES if the predicate is successful
+  BOOL match = [myPredicate evaluateWithObject:self.string];
+  
+  // Do what you want
+  if (match)
+  {
+    // do something
+    NSString *str = self.string;
+    NSString *truncatedString = [str substringToIndex:[str length]-1];
+    self.string = truncatedString;
+    
+    NSString *lastLineString = [[self string] substringWithRange:[[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)]];
+    
+    NSLog(@"last line: %@",lastLineString);
+    
+    [super insertNewline:sender];
+  }
+  
+  else
+  
+  {
+  
+  //NSLog(@"%s",[self.string UTF8String]);
+  
   [[NSNotificationCenter defaultCenter] postNotificationName:MGSFONewLineNotification object:self userInfo:[NSDictionary dictionaryWithObject:self.string forKey:INPUT_STRING_DEFAULT]];
   
   self.string = @"";
+  }
 }
 
 /*
