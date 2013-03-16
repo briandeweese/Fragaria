@@ -31,7 +31,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 @implementation SMLTextView
 
-@synthesize colouredIBeamCursor, fragaria, pageGuideColour, lineWrap;
+@synthesize colouredIBeamCursor, fragaria, pageGuideColour, lineWrap, historyArray;
 
 #pragma mark -
 #pragma mark Instance methods
@@ -44,6 +44,12 @@ Unless required by applicable law or agreed to in writing, software distributed 
 {
 	if ((self = [super initWithFrame:frame])) {
 		SMLLayoutManager *layoutManager = [[[SMLLayoutManager alloc] init] autorelease];
+    
+    NSMutableArray *ha = [[NSMutableArray alloc] initWithCapacity:500];
+    self.historyArray = ha;
+    
+    currentIndex = 0;
+    
 		[[self textContainer] replaceLayoutManager:layoutManager];
 		
 		[self setDefaults];
@@ -524,7 +530,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
  */
 - (void)insertLineBreak:(id)sender
 {
-	[super insertLineBreak:sender];
+	[self insertNewline:sender];
   
   // If we should indent automatically, check the previous line and scan all the whitespace at the beginning of the line into a string and insert that string into the new line
   
@@ -579,7 +585,10 @@ Unless required by applicable law or agreed to in writing, software distributed 
     
     NSString *lastLineString = [[self string] substringWithRange:[[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)]];
     
-    NSLog(@"last line: %@",lastLineString);
+    [self.historyArray addObject:lastLineString];
+    currentIndex = self.historyArray.count - 1;
+    
+    insertedStringFromHistory = NO;
     
     [super insertNewline:sender];
   }
@@ -1108,6 +1117,49 @@ Unless required by applicable law or agreed to in writing, software distributed 
     [textScrollView display];
     NSEnableScreenUpdates();
     
+}
+
+-(void)moveUp:(id)sender
+{
+  #pragma unused(sender)
+  
+  if (self.historyArray.count > 0) {
+    NSString *historyString = [self.historyArray objectAtIndex:currentIndex];
+    
+    NSRange range = [[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)];
+    
+    if (insertedStringFromHistory) {
+      [self replaceCharactersInRange:range withString:@""];
+    }
+    
+    [self insertText:historyString];
+    insertedStringFromHistory = YES;
+    if(currentIndex > 0) currentIndex--;
+  } 
+
+}
+
+-(void)moveDown:(id)sender
+{
+#pragma unused(sender)
+  
+  if (self.historyArray.count > 0) {
+    NSString *historyString = [self.historyArray objectAtIndex:currentIndex];
+    
+    NSRange range = [[self string] lineRangeForRange:NSMakeRange([self selectedRange].location - 1, 0)];
+    
+    if (insertedStringFromHistory) {
+      [self replaceCharactersInRange:range withString:@""];
+    }
+    
+    [self insertText:historyString];
+    insertedStringFromHistory = YES;
+    
+    NSInteger historyMax = self.historyArray.count - 1;
+    
+    if(currentIndex < historyMax) currentIndex++;
+  }
+  
 }
 
 @end

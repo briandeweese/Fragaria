@@ -35,11 +35,15 @@ Unless required by applicable law or agreed to in writing, software distributed 
 	
 	MGSFragaria *fragaria;
     BOOL lineWrap;
+  NSMutableArray *historyArray;
+  NSInteger currentIndex;
+  BOOL insertedStringFromHistory;
 }
 
 @property (retain) NSCursor *colouredIBeamCursor;
 @property (retain) MGSFragaria *fragaria;
 @property BOOL lineWrap;
+@property (strong, nonatomic) NSMutableArray *historyArray;
 
 - (void)setDefaults;
 
